@@ -1,8 +1,8 @@
-import { Router } from "express"
-import { createAluno } from "./alunos/alunos.controller"
+import { Router } from "express";
+import { createAluno } from "./alunos.controller";
 
-const router = Router()
+const router = Router();
 
-router.post("/", createAluno)
+router.post("/", createAluno);
 
-export default router
+export default router;
