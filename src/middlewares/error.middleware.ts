@@ -1,4 +1,6 @@
 import { NextFunction, Request, Response } from "express";
+import { ZodError } from "zod";
+import { AuthError } from "../modules/auth/auth.errors";
 
 export function errorMiddleware(
   error: unknown,
@@ -7,6 +9,22 @@ export function errorMiddleware(
   _next: NextFunction,
 ): void {
   console.error(error);
+
+  if (error instanceof ZodError) {
+    res.status(400).json({
+      success: false,
+      message: "Dados inválidos",
+    });
+    return;
+  }
+
+  if (error instanceof AuthError) {
+    res.status(error.statusCode).json({
+      success: false,
+      message: error.message,
+    });
+    return;
+  }
 
   if (error instanceof Error) {
     res.status(500).json({
