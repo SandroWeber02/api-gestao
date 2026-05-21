@@ -1,10 +1,13 @@
-import { Request, Response } from "express"
-import { createMatriculaService } from "./matriculas.service"
+import { Request, Response } from "express";
+import { createMatriculaService } from "./matriculas.service";
 
 export async function createMatricula(req: Request, res: Response) {
-  const data = req.body
+  const data = req.body;
 
-  const result = await createMatriculaService(data)
+  const result = await createMatriculaService(data);
 
-  return res.json(result)
+  return res.json({
+    success: true,
+    data: result,
+  });
 }
