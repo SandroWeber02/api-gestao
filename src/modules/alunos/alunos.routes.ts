@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { createAluno } from "./alunos/alunos.controller"
+import { createAluno } from "./alunos.controller"
 
 const router = Router()
 
