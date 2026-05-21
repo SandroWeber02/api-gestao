@@ -4,7 +4,6 @@ export const createTurmaSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
   ano_letivo: z.coerce.number().min(1, "Ano letivo é obrigatório"),
   periodo: z.string().min(1, "Período é obrigatório"),
-  ativo: z.coerce.number().optional(),
 });
 
 export const updateTurmaSchema = z.object({

@@ -5,7 +5,11 @@ export function createTurma(data: { nome: string; ano_letivo: number; periodo: s
 }
 
 export function listTurmas() {
-  return prisma.turma.findMany({ orderBy: { created_at: "desc" } });
+  return prisma.turma.findMany({
+    orderBy: {
+      created_at: "desc",
+    },
+  });
 }
 
 export function findTurmaById(id: string) {

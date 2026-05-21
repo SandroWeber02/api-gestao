@@ -6,8 +6,10 @@ export function createTurmaService(input: CreateTurmaInput) {
   return createTurma(input);
 }
 
-export function listTurmasService() {
-  return listTurmas();
+export async function listTurmasService() {
+  const turmas = await listTurmas();
+
+  return turmas.filter((turma) => turma.ativo === true);
 }
 
 export async function getTurmaByIdService(id: string) {
