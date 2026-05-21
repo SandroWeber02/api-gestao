@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { createAlunoService } from "../alunos.service"
+import { createAlunoService } from "./alunos.service"
 
 export async function createAluno(req: Request, res: Response) {
   const data = req.body
