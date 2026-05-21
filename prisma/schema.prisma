@@ -24,3 +24,16 @@ model Usuario {
 
   @@map("usuarios")
 }
+
+
+model Turma {
+  id         String   @id @default(uuid())
+  nome       String
+  ano_letivo Int
+  periodo    String
+  ativo      Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("turmas")
+}

@@ -26,6 +26,12 @@ declare module "@prisma/client" {
       findUnique(args: { where: { email?: string; id?: string } }): Promise<Usuario | null>;
       create(args: { data: { nome: string; email: string; senha: string; perfil: Perfil } }): Promise<Usuario>;
     };
+    turma: {
+      create(args: { data: { nome: string; ano_letivo: number; periodo: string; ativo?: boolean } }): Promise<any>;
+      findMany(args?: { orderBy?: { created_at?: "asc" | "desc" } }): Promise<any[]>;
+      findUnique(args: { where: { id: string } }): Promise<any | null>;
+      update(args: { where: { id: string }; data: { nome?: string; ano_letivo?: number; periodo?: string; ativo?: boolean } }): Promise<any>;
+    };
     constructor(options?: { log?: Array<"query" | "info" | "warn" | "error"> });
   }
 }
@@ -51,11 +57,13 @@ declare module "zod" {
     min(value: number, message?: string): ZodType<T>;
     email(message?: string): ZodType<T>;
     parse(input: unknown): T;
+    optional(): ZodType<T | undefined>;
   }
 
   export interface ZodObject<T> {
     safeParse(input: unknown): SafeParseResult<T>;
     parse(input: unknown): T;
+    optional(): ZodType<T | undefined>;
   }
 
   export const z: {
@@ -63,5 +71,6 @@ declare module "zod" {
     enum: <T extends readonly [string, ...string[]]>(values: T) => ZodType<T[number]>;
     coerce: { number: () => ZodType<number> };
     string: () => ZodType<string>;
+    boolean: () => ZodType<boolean>;
   };
 }
