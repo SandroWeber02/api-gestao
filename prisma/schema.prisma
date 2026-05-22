@@ -53,3 +53,22 @@ model Aluno {
 
   @@map("alunos")
 }
+
+
+model Responsavel {
+  id                 String   @id @default(uuid())
+  nome               String
+  cpf                String?  @unique
+  rg                 String?
+  celular            String?
+  telefone_fixo      String?
+  email              String?
+  profissao          String?
+  local_trabalho     String?
+  telefone_comercial String?
+  ativo              Boolean  @default(true)
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  @@map("responsaveis")
+}

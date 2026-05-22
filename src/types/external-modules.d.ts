@@ -35,6 +35,24 @@ declare module "@prisma/client" {
     updated_at: Date;
   };
 
+
+
+  export type Responsavel = {
+    id: string;
+    nome: string;
+    cpf: string | null;
+    rg: string | null;
+    celular: string | null;
+    telefone_fixo: string | null;
+    email: string | null;
+    profissao: string | null;
+    local_trabalho: string | null;
+    telefone_comercial: string | null;
+    ativo: boolean;
+    created_at: Date;
+    updated_at: Date;
+  };
+
   export class PrismaClient {
     usuario: {
       findUnique(args: { where: { email?: string; id?: string } }): Promise<Usuario | null>;
@@ -51,6 +69,12 @@ declare module "@prisma/client" {
       findMany(args?: { where?: { ativo?: boolean }; orderBy?: { created_at?: "asc" | "desc" } }): Promise<Aluno[]>;
       findUnique(args: { where: { id?: string; cpf?: string } }): Promise<Aluno | null>;
       update(args: { where: { id: string }; data: { nome?: string; data_nascimento?: Date; cpf?: string; rg_certidao?: string; sexo?: string; tipo?: string; ativo?: boolean } }): Promise<Aluno>;
+    };
+    responsavel: {
+      create(args: { data: { nome: string; cpf?: string; rg?: string; celular?: string; telefone_fixo?: string; email?: string; profissao?: string; local_trabalho?: string; telefone_comercial?: string; ativo?: boolean } }): Promise<Responsavel>;
+      findMany(args?: { orderBy?: { created_at?: "asc" | "desc" } }): Promise<Responsavel[]>;
+      findUnique(args: { where: { id?: string; cpf?: string } }): Promise<Responsavel | null>;
+      update(args: { where: { id: string }; data: { nome?: string; cpf?: string; rg?: string; celular?: string; telefone_fixo?: string; email?: string; profissao?: string; local_trabalho?: string; telefone_comercial?: string; ativo?: boolean } }): Promise<Responsavel>;
     };
     constructor(options?: { log?: Array<"query" | "info" | "warn" | "error"> });
   }
