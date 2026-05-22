@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Perfil {
+  admin
+  professor
+}
+
+model Usuario {
+  id         String   @id @default(uuid())
+  nome       String
+  email      String   @unique
+  senha      String
+  perfil     Perfil
+  ativo      Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("usuarios")
+}
+
+
+model Turma {
+  id         String   @id @default(uuid())
+  nome       String
+  ano_letivo Int
+  periodo    String
+  ativo      Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("turmas")
+}
+
+
+model Aluno {
+  id              String   @id @default(uuid())
+  nome            String
+  data_nascimento DateTime?
+  cpf             String?  @unique
+  rg_certidao     String?
+  sexo            String?
+  tipo            String?
+  ativo           Boolean  @default(true)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  @@map("alunos")
+}
+
+
+model Responsavel {
+  id                 String   @id @default(uuid())
+  nome               String
+  cpf                String?  @unique
+  rg                 String?
+  celular            String?
+  telefone_fixo      String?
+  email              String?
+  profissao          String?
+  local_trabalho     String?
+  telefone_comercial String?
+  ativo              Boolean  @default(true)
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  @@map("responsaveis")
+}
