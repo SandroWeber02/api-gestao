@@ -53,6 +53,21 @@ declare module "@prisma/client" {
     updated_at: Date;
   };
 
+
+
+  export type AlunoResponsavel = {
+    id: string;
+    aluno_id: string;
+    responsavel_id: string;
+    tipo: string;
+    parentesco: string | null;
+    responsavel_financeiro: boolean;
+    autorizado_retirada: boolean;
+    ativo: boolean;
+    created_at: Date;
+    updated_at: Date;
+  };
+
   export class PrismaClient {
     usuario: {
       findUnique(args: { where: { email?: string; id?: string } }): Promise<Usuario | null>;
@@ -75,6 +90,13 @@ declare module "@prisma/client" {
       findMany(args?: { orderBy?: { created_at?: "asc" | "desc" } }): Promise<Responsavel[]>;
       findUnique(args: { where: { id?: string; cpf?: string } }): Promise<Responsavel | null>;
       update(args: { where: { id: string }; data: { nome?: string; cpf?: string; rg?: string; celular?: string; telefone_fixo?: string; email?: string; profissao?: string; local_trabalho?: string; telefone_comercial?: string; ativo?: boolean } }): Promise<Responsavel>;
+    };
+    alunoResponsavel: {
+      create(args: { data: { aluno_id: string; responsavel_id: string; tipo: string; parentesco?: string; responsavel_financeiro?: boolean; autorizado_retirada?: boolean; ativo?: boolean } }): Promise<AlunoResponsavel>;
+      findMany(args?: { orderBy?: { created_at?: "asc" | "desc" } }): Promise<AlunoResponsavel[]>;
+      findUnique(args: { where: { id: string } }): Promise<AlunoResponsavel | null>;
+      findFirst(args: { where: { aluno_id: string; responsavel_id: string } }): Promise<AlunoResponsavel | null>;
+      update(args: { where: { id: string }; data: { aluno_id?: string; responsavel_id?: string; tipo?: string; parentesco?: string; responsavel_financeiro?: boolean; autorizado_retirada?: boolean; ativo?: boolean } }): Promise<AlunoResponsavel>;
     };
     constructor(options?: { log?: Array<"query" | "info" | "warn" | "error"> });
   }

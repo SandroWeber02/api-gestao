@@ -51,6 +51,8 @@ model Aluno {
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
 
+  responsaveis     AlunoResponsavel[]
+
   @@map("alunos")
 }
 
@@ -70,5 +72,27 @@ model Responsavel {
   created_at         DateTime @default(now())
   updated_at         DateTime @updatedAt
 
+  alunos             AlunoResponsavel[]
+
   @@map("responsaveis")
+}
+
+
+model AlunoResponsavel {
+  id                     String      @id @default(uuid())
+  aluno_id               String
+  responsavel_id         String
+  tipo                   String
+  parentesco             String?
+  responsavel_financeiro Boolean     @default(false)
+  autorizado_retirada    Boolean     @default(false)
+  ativo                  Boolean     @default(true)
+  created_at             DateTime    @default(now())
+  updated_at             DateTime    @updatedAt
+
+  aluno       Aluno      @relation(fields: [aluno_id], references: [id])
+  responsavel Responsavel @relation(fields: [responsavel_id], references: [id])
+
+  @@unique([aluno_id, responsavel_id])
+  @@map("aluno_responsavel")
 }

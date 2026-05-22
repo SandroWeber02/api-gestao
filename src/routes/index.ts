@@ -4,6 +4,7 @@ import authRoutes from "../modules/auth/auth.routes";
 import turmasRoutes from "../modules/turmas/turmas.routes";
 import alunosRoutes from "../modules/alunos/alunos.routes";
 import responsaveisRoutes from "../modules/responsaveis/responsaveis.routes";
+import alunoResponsavelRoutes from "../modules/aluno-responsavel/alunoResponsavel.routes";
 
 const routes = Router();
 
@@ -12,5 +13,6 @@ routes.use("/auth", authRoutes);
 routes.use("/turmas", turmasRoutes);
 routes.use("/alunos", alunosRoutes);
 routes.use("/responsaveis", responsaveisRoutes);
+routes.use("/aluno-responsavel", alunoResponsavelRoutes);
 
 export default routes;
