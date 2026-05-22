@@ -37,3 +37,19 @@ model Turma {
 
   @@map("turmas")
 }
+
+
+model Aluno {
+  id              String   @id @default(uuid())
+  nome            String
+  data_nascimento DateTime?
+  cpf             String?  @unique
+  rg_certidao     String?
+  sexo            String?
+  tipo            String?
+  ativo           Boolean  @default(true)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  @@map("alunos")
+}

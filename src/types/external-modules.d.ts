@@ -21,6 +21,20 @@ declare module "@prisma/client" {
     updated_at: Date;
   };
 
+
+  export type Aluno = {
+    id: string;
+    nome: string;
+    data_nascimento: Date | null;
+    cpf: string | null;
+    rg_certidao: string | null;
+    sexo: string | null;
+    tipo: string | null;
+    ativo: boolean;
+    created_at: Date;
+    updated_at: Date;
+  };
+
   export class PrismaClient {
     usuario: {
       findUnique(args: { where: { email?: string; id?: string } }): Promise<Usuario | null>;
@@ -31,6 +45,12 @@ declare module "@prisma/client" {
       findMany(args?: { orderBy?: { created_at?: "asc" | "desc" } }): Promise<any[]>;
       findUnique(args: { where: { id: string } }): Promise<any | null>;
       update(args: { where: { id: string }; data: { nome?: string; ano_letivo?: number; periodo?: string; ativo?: boolean } }): Promise<any>;
+    };
+    aluno: {
+      create(args: { data: { nome: string; data_nascimento?: Date; cpf?: string; rg_certidao?: string; sexo?: string; tipo?: string; ativo?: boolean } }): Promise<Aluno>;
+      findMany(args?: { where?: { ativo?: boolean }; orderBy?: { created_at?: "asc" | "desc" } }): Promise<Aluno[]>;
+      findUnique(args: { where: { id?: string; cpf?: string } }): Promise<Aluno | null>;
+      update(args: { where: { id: string }; data: { nome?: string; data_nascimento?: Date; cpf?: string; rg_certidao?: string; sexo?: string; tipo?: string; ativo?: boolean } }): Promise<Aluno>;
     };
     constructor(options?: { log?: Array<"query" | "info" | "warn" | "error"> });
   }
