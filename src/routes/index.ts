@@ -1,10 +1,14 @@
-import { Router } from "express"
-import alunosRoutes from "../modules/alunos/alunos.routes"
-import matriculasRoutes from "../modules/matriculas/matriculas.routes"
+import { Router } from "express";
+import healthRoutes from "./health.routes";
+import authRoutes from "../modules/auth/auth.routes";
+import turmasRoutes from "../modules/turmas/turmas.routes";
+import alunosRoutes from "../modules/alunos/alunos.routes";
 
-const routes = Router()
+const routes = Router();
 
-routes.use("/alunos", alunosRoutes)
-routes.use("/matriculas", matriculasRoutes)
+routes.use(healthRoutes);
+routes.use("/auth", authRoutes);
+routes.use("/turmas", turmasRoutes);
+routes.use("/alunos", alunosRoutes);
 
-export default routes
+export default routes;
