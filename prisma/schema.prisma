@@ -35,6 +35,8 @@ model Turma {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
+  matriculas Matricula[]
+
   @@map("turmas")
 }
 
@@ -55,6 +57,7 @@ model Aluno {
   endereco          Endereco?
   saude             SaudeAluno?
   contato_emergencia ContatoEmergencia?
+  matriculas        Matricula[]
 
   @@map("alunos")
 }
@@ -155,4 +158,24 @@ model ContatoEmergencia {
   aluno      Aluno    @relation(fields: [aluno_id], references: [id])
 
   @@map("contatos_emergencia")
+}
+
+
+model Matricula {
+  id             String   @id @default(uuid())
+  aluno_id       String
+  turma_id       String
+  ano_letivo     Int
+  periodo        String?
+  data_matricula DateTime @default(now())
+  status         String   @default("ativa")
+  observacoes    String?
+  ativo          Boolean  @default(true)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  aluno          Aluno    @relation(fields: [aluno_id], references: [id])
+  turma          Turma    @relation(fields: [turma_id], references: [id])
+
+  @@map("matriculas")
 }

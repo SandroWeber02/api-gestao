@@ -7,6 +7,7 @@ import responsaveisRoutes from "../modules/responsaveis/responsaveis.routes";
 import alunoResponsavelRoutes from "../modules/aluno-responsavel/alunoResponsavel.routes";
 import enderecosRoutes from "../modules/enderecos/enderecos.routes";
 import dashboardRoutes from "../modules/dashboard/dashboard.routes";
+import matriculasRoutes from "../modules/matriculas/matriculas.routes";
 import saudeAlunoRoutes from "../modules/saude-aluno/saudeAluno.routes";
 import contatosEmergenciaRoutes from "../modules/contatos-emergencia/contatosEmergencia.routes";
 
@@ -20,6 +21,7 @@ routes.use("/responsaveis", responsaveisRoutes);
 routes.use("/aluno-responsavel", alunoResponsavelRoutes);
 routes.use("/enderecos", enderecosRoutes);
 routes.use("/dashboard", dashboardRoutes);
+routes.use("/matriculas", matriculasRoutes);
 routes.use("/saude-aluno", saudeAlunoRoutes);
 routes.use("/contatos-emergencia", contatosEmergenciaRoutes);
 
