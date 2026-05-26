@@ -1,0 +1,158 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Perfil {
+  admin
+  professor
+}
+
+model Usuario {
+  id         String   @id @default(uuid())
+  nome       String
+  email      String   @unique
+  senha      String
+  perfil     Perfil
+  ativo      Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("usuarios")
+}
+
+
+model Turma {
+  id         String   @id @default(uuid())
+  nome       String
+  ano_letivo Int
+  periodo    String
+  ativo      Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("turmas")
+}
+
+
+model Aluno {
+  id              String   @id @default(uuid())
+  nome            String
+  data_nascimento DateTime?
+  cpf             String?  @unique
+  rg_certidao     String?
+  sexo            String?
+  tipo            String?
+  ativo           Boolean  @default(true)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  responsaveis     AlunoResponsavel[]
+  endereco          Endereco?
+  saude             SaudeAluno?
+  contato_emergencia ContatoEmergencia?
+
+  @@map("alunos")
+}
+
+
+model Responsavel {
+  id                 String   @id @default(uuid())
+  nome               String
+  cpf                String?  @unique
+  rg                 String?
+  celular            String?
+  telefone_fixo      String?
+  email              String?
+  profissao          String?
+  local_trabalho     String?
+  telefone_comercial String?
+  ativo              Boolean  @default(true)
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  alunos             AlunoResponsavel[]
+
+  @@map("responsaveis")
+}
+
+
+model AlunoResponsavel {
+  id                     String      @id @default(uuid())
+  aluno_id               String
+  responsavel_id         String
+  tipo                   String
+  parentesco             String?
+  responsavel_financeiro Boolean     @default(false)
+  autorizado_retirada    Boolean     @default(false)
+  ativo                  Boolean     @default(true)
+  created_at             DateTime    @default(now())
+  updated_at             DateTime    @updatedAt
+
+  aluno       Aluno      @relation(fields: [aluno_id], references: [id])
+  responsavel Responsavel @relation(fields: [responsavel_id], references: [id])
+
+  @@unique([aluno_id, responsavel_id])
+  @@map("aluno_responsavel")
+}
+
+
+model Endereco {
+  id          String   @id @default(uuid())
+  aluno_id    String   @unique
+  cep         String?
+  logradouro  String?
+  numero      String?
+  complemento String?
+  bairro      String?
+  cidade      String?
+  estado      String?
+  ativo       Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  aluno       Aluno    @relation(fields: [aluno_id], references: [id])
+
+  @@map("enderecos")
+}
+
+
+model SaudeAluno {
+  id                     String   @id @default(uuid())
+  aluno_id               String   @unique
+  alergias               String?
+  medicamentos           String?
+  necessidades_especiais String?
+  convenio_medico        Boolean  @default(false)
+  nome_convenio          String?
+  numero_carteirinha     String?
+  observacoes            String?
+  ativo                  Boolean  @default(true)
+  created_at             DateTime @default(now())
+  updated_at             DateTime @updatedAt
+
+  aluno                  Aluno    @relation(fields: [aluno_id], references: [id])
+
+  @@map("saude_aluno")
+}
+
+
+model ContatoEmergencia {
+  id         String   @id @default(uuid())
+  aluno_id   String   @unique
+  nome       String
+  parentesco String?
+  telefone   String
+  observacao String?
+  ativo      Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  aluno      Aluno    @relation(fields: [aluno_id], references: [id])
+
+  @@map("contatos_emergencia")
+}
