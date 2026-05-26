@@ -52,6 +52,7 @@ model Aluno {
   updated_at      DateTime @updatedAt
 
   responsaveis     AlunoResponsavel[]
+  endereco          Endereco?
 
   @@map("alunos")
 }
@@ -95,4 +96,24 @@ model AlunoResponsavel {
 
   @@unique([aluno_id, responsavel_id])
   @@map("aluno_responsavel")
+}
+
+
+model Endereco {
+  id          String   @id @default(uuid())
+  aluno_id    String   @unique
+  cep         String?
+  logradouro  String?
+  numero      String?
+  complemento String?
+  bairro      String?
+  cidade      String?
+  estado      String?
+  ativo       Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  aluno       Aluno    @relation(fields: [aluno_id], references: [id])
+
+  @@map("enderecos")
 }

@@ -68,6 +68,23 @@ declare module "@prisma/client" {
     updated_at: Date;
   };
 
+
+
+  export type Endereco = {
+    id: string;
+    aluno_id: string;
+    cep: string | null;
+    logradouro: string | null;
+    numero: string | null;
+    complemento: string | null;
+    bairro: string | null;
+    cidade: string | null;
+    estado: string | null;
+    ativo: boolean;
+    created_at: Date;
+    updated_at: Date;
+  };
+
   export class PrismaClient {
     usuario: {
       findUnique(args: { where: { email?: string; id?: string } }): Promise<Usuario | null>;
@@ -97,6 +114,12 @@ declare module "@prisma/client" {
       findUnique(args: { where: { id: string } }): Promise<AlunoResponsavel | null>;
       findFirst(args: { where: { aluno_id: string; responsavel_id: string } }): Promise<AlunoResponsavel | null>;
       update(args: { where: { id: string }; data: { aluno_id?: string; responsavel_id?: string; tipo?: string; parentesco?: string; responsavel_financeiro?: boolean; autorizado_retirada?: boolean; ativo?: boolean } }): Promise<AlunoResponsavel>;
+    };
+    endereco: {
+      create(args: { data: { aluno_id: string; cep?: string; logradouro?: string; numero?: string; complemento?: string; bairro?: string; cidade?: string; estado?: string; ativo?: boolean } }): Promise<Endereco>;
+      findMany(args?: { orderBy?: { created_at?: "asc" | "desc" } }): Promise<Endereco[]>;
+      findUnique(args: { where: { id?: string; aluno_id?: string } }): Promise<Endereco | null>;
+      update(args: { where: { id: string }; data: { aluno_id?: string; cep?: string; logradouro?: string; numero?: string; complemento?: string; bairro?: string; cidade?: string; estado?: string; ativo?: boolean } }): Promise<Endereco>;
     };
     constructor(options?: { log?: Array<"query" | "info" | "warn" | "error"> });
   }
