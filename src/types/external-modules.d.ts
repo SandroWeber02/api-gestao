@@ -85,6 +85,23 @@ declare module "@prisma/client" {
     updated_at: Date;
   };
 
+
+
+  export type SaudeAluno = {
+    id: string;
+    aluno_id: string;
+    alergias: string | null;
+    medicamentos: string | null;
+    necessidades_especiais: string | null;
+    convenio_medico: boolean;
+    nome_convenio: string | null;
+    numero_carteirinha: string | null;
+    observacoes: string | null;
+    ativo: boolean;
+    created_at: Date;
+    updated_at: Date;
+  };
+
   export class PrismaClient {
     usuario: {
       findUnique(args: { where: { email?: string; id?: string } }): Promise<Usuario | null>;
@@ -120,6 +137,12 @@ declare module "@prisma/client" {
       findMany(args?: { orderBy?: { created_at?: "asc" | "desc" } }): Promise<Endereco[]>;
       findUnique(args: { where: { id?: string; aluno_id?: string } }): Promise<Endereco | null>;
       update(args: { where: { id: string }; data: { aluno_id?: string; cep?: string; logradouro?: string; numero?: string; complemento?: string; bairro?: string; cidade?: string; estado?: string; ativo?: boolean } }): Promise<Endereco>;
+    };
+    saudeAluno: {
+      create(args: { data: { aluno_id: string; alergias?: string; medicamentos?: string; necessidades_especiais?: string; convenio_medico?: boolean; nome_convenio?: string; numero_carteirinha?: string; observacoes?: string; ativo?: boolean } }): Promise<SaudeAluno>;
+      findMany(args?: { orderBy?: { created_at?: "asc" | "desc" } }): Promise<SaudeAluno[]>;
+      findUnique(args: { where: { id?: string; aluno_id?: string } }): Promise<SaudeAluno | null>;
+      update(args: { where: { id: string }; data: { aluno_id?: string; alergias?: string; medicamentos?: string; necessidades_especiais?: string; convenio_medico?: boolean; nome_convenio?: string; numero_carteirinha?: string; observacoes?: string; ativo?: boolean } }): Promise<SaudeAluno>;
     };
     constructor(options?: { log?: Array<"query" | "info" | "warn" | "error"> });
   }
