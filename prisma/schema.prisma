@@ -54,6 +54,7 @@ model Aluno {
   responsaveis     AlunoResponsavel[]
   endereco          Endereco?
   saude             SaudeAluno?
+  contato_emergencia ContatoEmergencia?
 
   @@map("alunos")
 }
@@ -137,4 +138,21 @@ model SaudeAluno {
   aluno                  Aluno    @relation(fields: [aluno_id], references: [id])
 
   @@map("saude_aluno")
+}
+
+
+model ContatoEmergencia {
+  id         String   @id @default(uuid())
+  aluno_id   String   @unique
+  nome       String
+  parentesco String?
+  telefone   String
+  observacao String?
+  ativo      Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  aluno      Aluno    @relation(fields: [aluno_id], references: [id])
+
+  @@map("contatos_emergencia")
 }

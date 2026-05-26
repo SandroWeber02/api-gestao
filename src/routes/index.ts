@@ -8,6 +8,7 @@ import alunoResponsavelRoutes from "../modules/aluno-responsavel/alunoResponsave
 import enderecosRoutes from "../modules/enderecos/enderecos.routes";
 import dashboardRoutes from "../modules/dashboard/dashboard.routes";
 import saudeAlunoRoutes from "../modules/saude-aluno/saudeAluno.routes";
+import contatosEmergenciaRoutes from "../modules/contatos-emergencia/contatosEmergencia.routes";
 
 const routes = Router();
 
@@ -20,5 +21,6 @@ routes.use("/aluno-responsavel", alunoResponsavelRoutes);
 routes.use("/enderecos", enderecosRoutes);
 routes.use("/dashboard", dashboardRoutes);
 routes.use("/saude-aluno", saudeAlunoRoutes);
+routes.use("/contatos-emergencia", contatosEmergenciaRoutes);
 
 export default routes;
