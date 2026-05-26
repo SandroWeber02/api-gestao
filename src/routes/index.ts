@@ -6,6 +6,7 @@ import alunosRoutes from "../modules/alunos/alunos.routes";
 import responsaveisRoutes from "../modules/responsaveis/responsaveis.routes";
 import alunoResponsavelRoutes from "../modules/aluno-responsavel/alunoResponsavel.routes";
 import enderecosRoutes from "../modules/enderecos/enderecos.routes";
+import dashboardRoutes from "../modules/dashboard/dashboard.routes";
 
 const routes = Router();
 
@@ -16,5 +17,6 @@ routes.use("/alunos", alunosRoutes);
 routes.use("/responsaveis", responsaveisRoutes);
 routes.use("/aluno-responsavel", alunoResponsavelRoutes);
 routes.use("/enderecos", enderecosRoutes);
+routes.use("/dashboard", dashboardRoutes);
 
 export default routes;
