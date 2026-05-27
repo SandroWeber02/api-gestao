@@ -7,10 +7,12 @@ import {
   listMatriculasController,
   updateMatriculaController,
 } from "./matriculas.controller";
+import { createMatriculaCompletaController } from "./matriculasCompleta.controller";
 
 const matriculasRoutes = Router();
 
 matriculasRoutes.use(authMiddleware);
+matriculasRoutes.post("/completa", createMatriculaCompletaController);
 matriculasRoutes.post("/", createMatriculaController);
 matriculasRoutes.get("/", listMatriculasController);
 matriculasRoutes.get("/:id", getMatriculaByIdController);
