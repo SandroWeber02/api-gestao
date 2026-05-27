@@ -1,5 +1,6 @@
 import { prisma } from "../../config/database";
 
+
 export function createResponsavel(data: {
   nome: string;
   cpf?: string;
