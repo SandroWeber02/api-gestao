@@ -10,6 +10,7 @@ import dashboardRoutes from "../modules/dashboard/dashboard.routes";
 import matriculasRoutes from "../modules/matriculas/matriculas.routes";
 import saudeAlunoRoutes from "../modules/saude-aluno/saudeAluno.routes";
 import contatosEmergenciaRoutes from "../modules/contatos-emergencia/contatosEmergencia.routes";
+import documentosMatriculaRoutes from "../modules/documentos-matricula/documentosMatricula.routes";
 
 const routes = Router();
 
@@ -24,5 +25,6 @@ routes.use("/dashboard", dashboardRoutes);
 routes.use("/matriculas", matriculasRoutes);
 routes.use("/saude-aluno", saudeAlunoRoutes);
 routes.use("/contatos-emergencia", contatosEmergenciaRoutes);
+routes.use("/documentos-matricula", documentosMatriculaRoutes);
 
 export default routes;

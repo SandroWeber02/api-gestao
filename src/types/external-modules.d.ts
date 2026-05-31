@@ -132,6 +132,23 @@ declare module "@prisma/client" {
     updated_at: Date;
   };
 
+
+
+  export type DocumentoMatricula = {
+    id: string;
+    aluno_id: string;
+    matricula_id: string | null;
+    tipo: string;
+    nome_arquivo: string;
+    arquivo_url: string;
+    storage_path: string;
+    status: string;
+    ativo: boolean;
+    uploaded_at: Date;
+    created_at: Date;
+    updated_at: Date;
+  };
+
   export class PrismaClient {
     usuario: {
       findUnique(args: { where: { email?: string; id?: string } }): Promise<Usuario | null>;
@@ -187,6 +204,12 @@ declare module "@prisma/client" {
       findFirst(args: { where: { aluno_id: string; ano_letivo: number } }): Promise<Matricula | null>;
       update(args: { where: { id: string }; data: { aluno_id?: string; turma_id?: string; ano_letivo?: number; periodo?: string; data_matricula?: Date; status?: string; observacoes?: string; ativo?: boolean } }): Promise<Matricula>;
     };
+    documentoMatricula: {
+      create(args: { data: { aluno_id: string; matricula_id?: string; tipo: string; nome_arquivo: string; arquivo_url: string; storage_path: string; status?: string; ativo?: boolean } }): Promise<DocumentoMatricula>;
+      findMany(args?: { orderBy?: { created_at?: "asc" | "desc" } }): Promise<DocumentoMatricula[]>;
+      findUnique(args: { where: { id: string } }): Promise<DocumentoMatricula | null>;
+      update(args: { where: { id: string }; data: { ativo?: boolean; status?: string } }): Promise<DocumentoMatricula>;
+    };
     constructor(options?: { log?: Array<"query" | "info" | "warn" | "error"> });
   }
 }
@@ -228,4 +251,40 @@ declare module "zod" {
     string: () => ZodType<string>;
     boolean: () => ZodType<boolean>;
   };
+}
+
+
+declare namespace Express {
+  namespace Multer {
+    type File = {
+      originalname: string;
+      mimetype: string;
+      buffer: Buffer;
+      size: number;
+    };
+  }
+}
+
+declare module "multer" {
+  import { RequestHandler } from "express";
+
+  type FileFilterCallback = (error: Error | null, acceptFile?: boolean) => void;
+
+  type Options = {
+    storage?: unknown;
+    limits?: { fileSize?: number };
+    fileFilter?: (req: unknown, file: Express.Multer.File, callback: FileFilterCallback) => void;
+  };
+
+  type MulterInstance = {
+    single(fieldName: string): RequestHandler;
+  };
+
+  type MulterFactory = {
+    (options?: Options): MulterInstance;
+    memoryStorage(): unknown;
+  };
+
+  const multer: MulterFactory;
+  export default multer;
 }

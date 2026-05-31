@@ -58,6 +58,7 @@ model Aluno {
   saude             SaudeAluno?
   contato_emergencia ContatoEmergencia?
   matriculas        Matricula[]
+  documentos DocumentoMatricula[]
 
   @@map("alunos")
 }
@@ -177,5 +178,28 @@ model Matricula {
   aluno          Aluno    @relation(fields: [aluno_id], references: [id])
   turma          Turma    @relation(fields: [turma_id], references: [id])
 
+  documentos DocumentoMatricula[]
+
   @@map("matriculas")
+}
+
+
+model DocumentoMatricula {
+  id           String   @id @default(uuid())
+  aluno_id     String
+  matricula_id String?
+  tipo         String
+  nome_arquivo String
+  arquivo_url  String
+  storage_path String
+  status       String   @default("enviado")
+  ativo        Boolean  @default(true)
+  uploaded_at  DateTime @default(now())
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  aluno     Aluno      @relation(fields: [aluno_id], references: [id])
+  matricula Matricula? @relation(fields: [matricula_id], references: [id])
+
+  @@map("documentos_matricula")
 }
