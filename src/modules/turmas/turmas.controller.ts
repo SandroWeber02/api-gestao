@@ -6,6 +6,7 @@ import {
   deleteTurmaService,
   getTurmaByIdService,
   listTurmasService,
+  listAlunosByTurmaService,
   updateTurmaService,
 } from "./turmas.service";
 import { AuthError } from "../auth/auth.errors";
@@ -54,4 +55,13 @@ export async function deleteTurmaController(req: Request, res: Response) {
   const turma = await deleteTurmaService(id);
 
   return res.json({ success: true, data: turma });
+}
+
+
+export async function listAlunosByTurmaController(req: Request, res: Response) {
+  ensureAdmin(req as AuthenticatedRequest);
+  const { id } = turmaIdParamSchema.parse(req.params);
+  const data = await listAlunosByTurmaService(id);
+
+  return res.json({ success: true, data });
 }

@@ -5,6 +5,7 @@ import {
   deleteTurmaController,
   getTurmaByIdController,
   listTurmasController,
+  listAlunosByTurmaController,
   updateTurmaController,
 } from "./turmas.controller";
 
@@ -13,6 +14,7 @@ const turmasRoutes = Router();
 turmasRoutes.use(authMiddleware);
 turmasRoutes.post("/", createTurmaController);
 turmasRoutes.get("/", listTurmasController);
+turmasRoutes.get("/:id/alunos", listAlunosByTurmaController);
 turmasRoutes.get("/:id", getTurmaByIdController);
 turmasRoutes.put("/:id", updateTurmaController);
 turmasRoutes.delete("/:id", deleteTurmaController);
