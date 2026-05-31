@@ -110,12 +110,12 @@ export async function createMatriculaCompletaService(input: CreateMatriculaCompl
     throw new AuthError("CPF do aluno já está em uso", 409);
   }
 
-  console.log("[matricula-completa] etapa: validar CPF do responsável");
+  console.log("[matricula-completa] etapa: buscar responsável por CPF");
   const existingResponsavelCpf = input.responsavel.cpf
     ? await prisma.responsavel.findUnique({ where: { cpf: input.responsavel.cpf } })
     : null;
-  if (existingResponsavelCpf) {
-    throw new AuthError("CPF do responsável já está em uso", 409);
+  if (existingResponsavelCpf && !existingResponsavelCpf.ativo) {
+    throw new AuthError("Responsável encontrado está inativo", 409);
   }
 
   console.log("[matricula-completa] etapa: validar turma");
@@ -149,22 +149,29 @@ export async function createMatriculaCompletaService(input: CreateMatriculaCompl
       throw new AuthError("Aluno já possui matrícula ativa neste ano letivo", 409);
     }
 
-    console.log("[matricula-completa] etapa: criar responsável");
-    const responsavel = await prisma.responsavel.create({
-      data: {
-        nome: input.responsavel.nome,
-        cpf: input.responsavel.cpf,
-        rg: input.responsavel.rg,
-        celular: input.responsavel.celular,
-        telefone_fixo: input.responsavel.telefone_fixo,
-        email: input.responsavel.email,
-        profissao: input.responsavel.profissao,
-        local_trabalho: input.responsavel.local_trabalho,
-        telefone_comercial: input.responsavel.telefone_comercial,
-        ativo: true,
-      },
-    });
-    created.responsavel = responsavel;
+    const responsavel = existingResponsavelCpf ?? (await (async () => {
+      console.log("[matricula-completa] etapa: criar responsável");
+      const novoResponsavel = await prisma.responsavel.create({
+        data: {
+          nome: input.responsavel.nome,
+          cpf: input.responsavel.cpf,
+          rg: input.responsavel.rg,
+          celular: input.responsavel.celular,
+          telefone_fixo: input.responsavel.telefone_fixo,
+          email: input.responsavel.email,
+          profissao: input.responsavel.profissao,
+          local_trabalho: input.responsavel.local_trabalho,
+          telefone_comercial: input.responsavel.telefone_comercial,
+          ativo: true,
+        },
+      });
+      created.responsavel = novoResponsavel;
+      return novoResponsavel;
+    })());
+
+    if (existingResponsavelCpf) {
+      console.log("[matricula-completa] etapa: reutilizar responsável existente");
+    }
 
     console.log("[matricula-completa] etapa: criar relação aluno-responsável");
     const relacao = await prisma.alunoResponsavel.create({
