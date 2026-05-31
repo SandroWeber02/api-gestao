@@ -4,6 +4,20 @@ import { CreateMatriculaCompletaInput } from "./matriculasCompleta.schema";
 
 const STATUS_PERMITIDOS = ["ativa", "pendente", "cancelada", "transferida", "concluida"];
 
+type CreatedRecord = {
+  id: string;
+};
+
+type MatriculaCompletaCriada = {
+  aluno?: CreatedRecord;
+  responsavel?: CreatedRecord;
+  relacao?: CreatedRecord;
+  endereco?: CreatedRecord;
+  saude?: CreatedRecord;
+  emergencia?: CreatedRecord;
+  matricula?: CreatedRecord;
+};
+
 function parseDate(value?: string): Date | undefined {
   if (!value) return undefined;
   const parsed = new Date(value);
@@ -20,9 +34,75 @@ function validarStatus(status?: string): void {
   }
 }
 
+async function rollbackMatriculaCompleta(created: MatriculaCompletaCriada): Promise<void> {
+  console.log("[matricula-completa] rollback iniciado");
+
+  const rollbackSteps: Array<{ etapa: string; action: () => Promise<unknown> }> = [
+    {
+      etapa: "matricula",
+      action: () =>
+        created.matricula
+          ? (prisma.matricula as any).delete({ where: { id: created.matricula.id } })
+          : Promise.resolve(),
+    },
+    {
+      etapa: "emergencia",
+      action: () =>
+        created.emergencia
+          ? (prisma.contatoEmergencia as any).delete({ where: { id: created.emergencia.id } })
+          : Promise.resolve(),
+    },
+    {
+      etapa: "saude",
+      action: () =>
+        created.saude
+          ? (prisma.saudeAluno as any).delete({ where: { id: created.saude.id } })
+          : Promise.resolve(),
+    },
+    {
+      etapa: "endereco",
+      action: () =>
+        created.endereco
+          ? (prisma.endereco as any).delete({ where: { id: created.endereco.id } })
+          : Promise.resolve(),
+    },
+    {
+      etapa: "relacao",
+      action: () =>
+        created.relacao
+          ? (prisma.alunoResponsavel as any).delete({ where: { id: created.relacao.id } })
+          : Promise.resolve(),
+    },
+    {
+      etapa: "responsavel",
+      action: () =>
+        created.responsavel
+          ? (prisma.responsavel as any).delete({ where: { id: created.responsavel.id } })
+          : Promise.resolve(),
+    },
+    {
+      etapa: "aluno",
+      action: () =>
+        created.aluno ? (prisma.aluno as any).delete({ where: { id: created.aluno.id } }) : Promise.resolve(),
+    },
+  ];
+
+  for (const step of rollbackSteps) {
+    try {
+      await step.action();
+      console.log(`[matricula-completa] rollback executado: ${step.etapa}`);
+    } catch (rollbackError) {
+      console.error(`[matricula-completa] erro no rollback (${step.etapa})`, rollbackError);
+    }
+  }
+
+  console.log("[matricula-completa] rollback finalizado");
+}
+
 export async function createMatriculaCompletaService(input: CreateMatriculaCompletaInput) {
   validarStatus(input.matricula.status);
 
+  console.log("[matricula-completa] etapa: validar CPF do aluno");
   const existingAlunoCpf = input.aluno.cpf
     ? await prisma.aluno.findUnique({ where: { cpf: input.aluno.cpf } })
     : null;
@@ -30,6 +110,7 @@ export async function createMatriculaCompletaService(input: CreateMatriculaCompl
     throw new AuthError("CPF do aluno já está em uso", 409);
   }
 
+  console.log("[matricula-completa] etapa: validar CPF do responsável");
   const existingResponsavelCpf = input.responsavel.cpf
     ? await prisma.responsavel.findUnique({ where: { cpf: input.responsavel.cpf } })
     : null;
@@ -37,13 +118,17 @@ export async function createMatriculaCompletaService(input: CreateMatriculaCompl
     throw new AuthError("CPF do responsável já está em uso", 409);
   }
 
+  console.log("[matricula-completa] etapa: validar turma");
   const turma = await prisma.turma.findUnique({ where: { id: input.matricula.turma_id } });
   if (!turma || !turma.ativo) {
     throw new AuthError("Turma não encontrada", 404);
   }
 
-  const result = await (prisma as any).$transaction(async (tx: any) => {
-    const aluno = await tx.aluno.create({
+  const created: MatriculaCompletaCriada = {};
+
+  try {
+    console.log("[matricula-completa] etapa: criar aluno");
+    const aluno = await prisma.aluno.create({
       data: {
         nome: input.aluno.nome,
         data_nascimento: parseDate(input.aluno.data_nascimento),
@@ -54,15 +139,18 @@ export async function createMatriculaCompletaService(input: CreateMatriculaCompl
         ativo: true,
       },
     });
+    created.aluno = aluno;
 
-    const existingMatricula = await tx.matricula.findFirst({
+    console.log("[matricula-completa] etapa: validar matrícula ativa duplicada");
+    const existingMatricula = await prisma.matricula.findFirst({
       where: { aluno_id: aluno.id, ano_letivo: input.matricula.ano_letivo },
     });
     if (existingMatricula && existingMatricula.ativo && existingMatricula.status === "ativa") {
       throw new AuthError("Aluno já possui matrícula ativa neste ano letivo", 409);
     }
 
-    const responsavel = await tx.responsavel.create({
+    console.log("[matricula-completa] etapa: criar responsável");
+    const responsavel = await prisma.responsavel.create({
       data: {
         nome: input.responsavel.nome,
         cpf: input.responsavel.cpf,
@@ -76,8 +164,10 @@ export async function createMatriculaCompletaService(input: CreateMatriculaCompl
         ativo: true,
       },
     });
+    created.responsavel = responsavel;
 
-    const relacao = await tx.alunoResponsavel.create({
+    console.log("[matricula-completa] etapa: criar relação aluno-responsável");
+    const relacao = await prisma.alunoResponsavel.create({
       data: {
         aluno_id: aluno.id,
         responsavel_id: responsavel.id,
@@ -88,8 +178,10 @@ export async function createMatriculaCompletaService(input: CreateMatriculaCompl
         ativo: true,
       },
     });
+    created.relacao = relacao;
 
-    const endereco = await tx.endereco.create({
+    console.log("[matricula-completa] etapa: criar endereço");
+    const endereco = await prisma.endereco.create({
       data: {
         aluno_id: aluno.id,
         cep: input.endereco.cep,
@@ -102,8 +194,10 @@ export async function createMatriculaCompletaService(input: CreateMatriculaCompl
         ativo: true,
       },
     });
+    created.endereco = endereco;
 
-    const saude = await tx.saudeAluno.create({
+    console.log("[matricula-completa] etapa: criar saúde");
+    const saude = await prisma.saudeAluno.create({
       data: {
         aluno_id: aluno.id,
         alergias: input.saude.alergias,
@@ -116,8 +210,10 @@ export async function createMatriculaCompletaService(input: CreateMatriculaCompl
         ativo: true,
       },
     });
+    created.saude = saude;
 
-    const emergencia = await tx.contatoEmergencia.create({
+    console.log("[matricula-completa] etapa: criar contato de emergência");
+    const emergencia = await prisma.contatoEmergencia.create({
       data: {
         aluno_id: aluno.id,
         nome: input.emergencia.nome,
@@ -127,8 +223,10 @@ export async function createMatriculaCompletaService(input: CreateMatriculaCompl
         ativo: true,
       },
     });
+    created.emergencia = emergencia;
 
-    const matricula = await tx.matricula.create({
+    console.log("[matricula-completa] etapa: criar matrícula");
+    const matricula = await prisma.matricula.create({
       data: {
         aluno_id: aluno.id,
         turma_id: input.matricula.turma_id,
@@ -140,9 +238,12 @@ export async function createMatriculaCompletaService(input: CreateMatriculaCompl
         ativo: true,
       },
     });
+    created.matricula = matricula;
 
     return { aluno, responsavel, relacao, endereco, saude, emergencia, matricula };
-  });
-
-  return result;
+  } catch (error) {
+    console.error("[matricula-completa] erro capturado", error);
+    await rollbackMatriculaCompleta(created);
+    throw error;
+  }
 }
