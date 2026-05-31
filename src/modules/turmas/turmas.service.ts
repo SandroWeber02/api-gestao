@@ -1,5 +1,12 @@
 import { AuthError } from "../auth/auth.errors";
-import { createTurma, findTurmaById, findTurmaWithAlunos, listTurmas, updateTurma } from "./turmas.repository";
+import {
+  createTurma,
+  findMatriculasAtivasByTurmaWithAluno,
+  findTurmaById,
+  findTurmaResumoById,
+  listTurmas,
+  updateTurma,
+} from "./turmas.repository";
 import { CreateTurmaInput, UpdateTurmaInput } from "./turmas.schema";
 
 export function createTurmaService(input: CreateTurmaInput) {
@@ -30,24 +37,24 @@ export async function deleteTurmaService(id: string) {
   return updateTurma(id, { ativo: false });
 }
 
-
 export async function listAlunosByTurmaService(id: string) {
-  const turma = await findTurmaWithAlunos(id);
+  const turma = await findTurmaResumoById(id);
 
   if (!turma) {
     throw new AuthError("Turma não encontrada", 404);
   }
 
+  const matriculas = await findMatriculasAtivasByTurmaWithAluno(id);
+  const alunosMap = new Map<string, { id: string; nome: string; cpf: string | null; data_nascimento: Date | null; sexo: string | null; tipo: string | null }>();
+
+  for (const matricula of matriculas) {
+    if (matricula.aluno) {
+      alunosMap.set(matricula.aluno.id, matricula.aluno);
+    }
+  }
+
   return {
-    turma: {
-      id: turma.id,
-      nome: turma.nome,
-      ano_letivo: turma.ano_letivo,
-      periodo: turma.periodo,
-    },
-    alunos: turma.matriculas
-      .map((matricula: { aluno: { ativo: boolean } }) => matricula.aluno)
-      .filter((aluno: { ativo: boolean }) => aluno.ativo)
-      .map(({ ativo, ...aluno }: { ativo: boolean; id: string; nome: string; cpf: string | null; data_nascimento: Date | null; sexo: string | null; tipo: string | null }) => aluno),
+    turma,
+    alunos: Array.from(alunosMap.values()),
   };
 }

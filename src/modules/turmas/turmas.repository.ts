@@ -12,12 +12,7 @@ export function findTurmaById(id: string) {
   return prisma.turma.findUnique({ where: { id } });
 }
 
-export function updateTurma(id: string, data: { nome?: string; ano_letivo?: number; periodo?: string; ativo?: boolean }) {
-  return prisma.turma.update({ where: { id }, data });
-}
-
-
-export function findTurmaWithAlunos(id: string) {
+export function findTurmaResumoById(id: string) {
   return (prisma.turma as any).findUnique({
     where: { id },
     select: {
@@ -25,23 +20,33 @@ export function findTurmaWithAlunos(id: string) {
       nome: true,
       ano_letivo: true,
       periodo: true,
+    },
+  });
+}
+
+export function findMatriculasAtivasByTurmaWithAluno(turma_id: string) {
+  return (prisma.matricula as any).findMany({
+    where: {
+      turma_id,
       ativo: true,
-      matriculas: {
-        where: { ativo: true },
+      aluno: { ativo: true },
+    },
+    select: {
+      aluno: {
         select: {
-          aluno: {
-            select: {
-              id: true,
-              nome: true,
-              cpf: true,
-              data_nascimento: true,
-              sexo: true,
-              tipo: true,
-              ativo: true,
-            },
-          },
+          id: true,
+          nome: true,
+          cpf: true,
+          data_nascimento: true,
+          sexo: true,
+          tipo: true,
         },
       },
     },
+    orderBy: { created_at: "desc" },
   });
+}
+
+export function updateTurma(id: string, data: { nome?: string; ano_letivo?: number; periodo?: string; ativo?: boolean }) {
+  return prisma.turma.update({ where: { id }, data });
 }
