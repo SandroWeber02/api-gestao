@@ -202,7 +202,7 @@ async function resolveResponsavel(input: AlunoCompletoInput, relacaoAtual: Relac
   }
 
   if (!input.responsavel.nome) {
-    throw new AuthError("Nome do responsável é obrigatório", 400);
+    return null;
   }
 
   return (prisma.responsavel as any).create({ data });
@@ -211,7 +211,7 @@ async function resolveResponsavel(input: AlunoCompletoInput, relacaoAtual: Relac
 async function upsertRelacao(aluno_id: string, input: AlunoCompletoInput, relacaoAtual: RelacaoAlunoResponsavel | null, responsavel: ResponsavelBasico | null) {
   if (!input.relacao && !input.responsavel) return;
   if (!responsavel) {
-    throw new AuthError("Responsável não encontrado", 404);
+    return;
   }
 
   const data = removeUndefined({
@@ -228,11 +228,12 @@ async function upsertRelacao(aluno_id: string, input: AlunoCompletoInput, relaca
     return (prisma.alunoResponsavel as any).update({ where: { id: relacaoAtual.id }, data });
   }
 
-  if (!input.relacao?.tipo) {
-    throw new AuthError("Tipo de responsável é obrigatório", 400);
-  }
-
-  return (prisma.alunoResponsavel as any).create({ data });
+  return (prisma.alunoResponsavel as any).create({
+    data: {
+      ...data,
+      tipo: input.relacao?.tipo ?? "responsavel",
+    },
+  });
 }
 
 async function upsertEndereco(aluno_id: string, input?: AlunoCompletoInput["endereco"]) {
@@ -268,7 +269,7 @@ async function upsertEmergencia(aluno_id: string, input?: AlunoCompletoInput["em
   const existing = await (prisma.contatoEmergencia as any).findUnique({ where: { aluno_id } });
 
   if (!existing && (!input.nome || !input.telefone)) {
-    throw new AuthError("Nome e telefone do contato de emergência são obrigatórios", 400);
+    return;
   }
 
   const data = removeUndefined({ aluno_id, ...input, ativo: true });
@@ -287,19 +288,21 @@ async function upsertMatricula(aluno_id: string, input?: AlunoCompletoInput["mat
 
   const existing = await findMatriculaAtivaByAluno(aluno_id);
 
-  if (!existing && (!input.turma_id || !input.ano_letivo)) {
-    throw new AuthError("turma_id e ano_letivo são obrigatórios para criar matrícula", 400);
+  if (!existing && (!input.turma_id || !input.data_matricula)) {
+    return;
   }
 
+  const dataMatricula = parseDate(input.data_matricula);
+  const anoLetivo = input.ano_letivo ?? dataMatricula?.getUTCFullYear();
   const data = removeUndefined({
     aluno_id,
     turma_id: input.turma_id,
-    ano_letivo: input.ano_letivo,
+    ano_letivo: anoLetivo,
     modalidade_ensino: input.modalidade_ensino,
     serie_ingresso: input.serie_ingresso,
     estabelecimento: input.estabelecimento,
     periodo: input.periodo,
-    data_matricula: parseDate(input.data_matricula),
+    data_matricula: dataMatricula,
     status: input.status,
     observacoes: input.observacoes,
     documentos_entregues: input.documentos_entregues,

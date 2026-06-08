@@ -99,8 +99,22 @@ async function rollbackMatriculaCompleta(created: MatriculaCompletaCriada): Prom
   console.log("[matricula-completa] rollback finalizado");
 }
 
+function hasValues(data?: Record<string, unknown>): boolean {
+  return Boolean(data && Object.values(data).some((value) => value !== undefined && value !== null && value !== ""));
+}
+
+function getAnoLetivo(input: CreateMatriculaCompletaInput): number {
+  if (input.matricula.ano_letivo) {
+    return input.matricula.ano_letivo;
+  }
+
+  return parseDate(input.matricula.data_matricula)!.getUTCFullYear();
+}
+
 export async function createMatriculaCompletaService(input: CreateMatriculaCompletaInput) {
   validarStatus(input.matricula.status);
+  const dataMatricula = parseDate(input.matricula.data_matricula);
+  const anoLetivo = getAnoLetivo(input);
 
   console.log("[matricula-completa] etapa: validar CPF do aluno");
   const existingAlunoCpf = input.aluno.cpf
@@ -111,7 +125,7 @@ export async function createMatriculaCompletaService(input: CreateMatriculaCompl
   }
 
   console.log("[matricula-completa] etapa: buscar responsável por CPF");
-  const existingResponsavelCpf = input.responsavel.cpf
+  const existingResponsavelCpf = input.responsavel?.cpf
     ? await prisma.responsavel.findUnique({ where: { cpf: input.responsavel.cpf } })
     : null;
   if (existingResponsavelCpf && !existingResponsavelCpf.ativo) {
@@ -175,15 +189,16 @@ export async function createMatriculaCompletaService(input: CreateMatriculaCompl
 
     console.log("[matricula-completa] etapa: validar matrícula ativa duplicada");
     const existingMatricula = await prisma.matricula.findFirst({
-      where: { aluno_id: aluno.id, ano_letivo: input.matricula.ano_letivo },
+      where: { aluno_id: aluno.id, ano_letivo: anoLetivo },
     });
     if (existingMatricula && existingMatricula.ativo && existingMatricula.status === "ativa") {
       throw new AuthError("Aluno já possui matrícula ativa neste ano letivo", 409);
     }
 
-    const responsavel = existingResponsavelCpf ?? (await (async () => {
+    let responsavel = existingResponsavelCpf;
+    if (!responsavel && input.responsavel?.nome) {
       console.log("[matricula-completa] etapa: criar responsável");
-      const novoResponsavel = await prisma.responsavel.create({
+      responsavel = await prisma.responsavel.create({
         data: {
           nome: input.responsavel.nome,
           cpf: input.responsavel.cpf,
@@ -202,90 +217,101 @@ export async function createMatriculaCompletaService(input: CreateMatriculaCompl
           ativo: true,
         },
       });
-      created.responsavel = novoResponsavel;
-      return novoResponsavel;
-    })());
+      created.responsavel = responsavel;
+    }
 
     if (existingResponsavelCpf) {
       console.log("[matricula-completa] etapa: reutilizar responsável existente");
     }
 
-    console.log("[matricula-completa] etapa: criar relação aluno-responsável");
-    const relacao = await prisma.alunoResponsavel.create({
-      data: {
-        aluno_id: aluno.id,
-        responsavel_id: responsavel.id,
-        tipo: input.relacao.tipo,
-        parentesco: input.relacao.parentesco,
-        responsavel_financeiro: input.relacao.responsavel_financeiro ?? false,
-        autorizado_retirada: input.relacao.autorizado_retirada ?? false,
-        ativo: true,
-      },
-    });
-    created.relacao = relacao;
+    let relacao = null;
+    if (responsavel) {
+      console.log("[matricula-completa] etapa: criar relação aluno-responsável");
+      relacao = await prisma.alunoResponsavel.create({
+        data: {
+          aluno_id: aluno.id,
+          responsavel_id: responsavel.id,
+          tipo: input.relacao?.tipo ?? "responsavel",
+          parentesco: input.relacao?.parentesco,
+          responsavel_financeiro: input.relacao?.responsavel_financeiro ?? false,
+          autorizado_retirada: input.relacao?.autorizado_retirada ?? false,
+          ativo: true,
+        },
+      });
+      created.relacao = relacao;
+    }
 
-    console.log("[matricula-completa] etapa: criar endereço");
-    const endereco = await prisma.endereco.create({
-      data: {
-        aluno_id: aluno.id,
-        cep: input.endereco.cep,
-        logradouro: input.endereco.logradouro ?? input.endereco.endereco,
-        numero: input.endereco.numero,
-        complemento: input.endereco.complemento,
-        bairro: input.endereco.bairro,
-        cidade: input.endereco.cidade,
-        estado: input.endereco.estado,
-        ativo: true,
-      },
-    });
-    created.endereco = endereco;
+    let endereco = null;
+    if (hasValues(input.endereco)) {
+      console.log("[matricula-completa] etapa: criar endereço");
+      endereco = await prisma.endereco.create({
+        data: {
+          aluno_id: aluno.id,
+          cep: input.endereco?.cep,
+          logradouro: input.endereco?.logradouro ?? input.endereco?.endereco,
+          numero: input.endereco?.numero,
+          complemento: input.endereco?.complemento,
+          bairro: input.endereco?.bairro,
+          cidade: input.endereco?.cidade,
+          estado: input.endereco?.estado,
+          ativo: true,
+        },
+      });
+      created.endereco = endereco;
+    }
 
-    console.log("[matricula-completa] etapa: criar saúde");
-    const saude = await prisma.saudeAluno.create({
-      data: {
-        aluno_id: aluno.id,
-        alergias: input.saude.alergias,
-        medicamentos: input.saude.medicamentos,
-        necessidades_especiais: input.saude.necessidades_especiais,
-        convenio_medico: input.saude.convenio_medico ?? false,
-        nome_convenio: input.saude.nome_convenio,
-        numero_carteirinha: input.saude.numero_carteirinha,
-        observacoes: input.saude.observacoes,
-        teve_doenca_grave: input.saude.teve_doenca_grave,
-        doenca_grave_qual: input.saude.doenca_grave_qual,
-        alergia_alimento_medicamento: input.saude.alergia_alimento_medicamento,
-        alergia_qual: input.saude.alergia_qual,
-        necessidades_educacionais_especiais: input.saude.necessidades_educacionais_especiais,
-        necessidades_qual: input.saude.necessidades_qual,
-        ativo: true,
-      },
-    });
-    created.saude = saude;
+    let saude = null;
+    if (hasValues(input.saude)) {
+      console.log("[matricula-completa] etapa: criar saúde");
+      saude = await prisma.saudeAluno.create({
+        data: {
+          aluno_id: aluno.id,
+          alergias: input.saude?.alergias,
+          medicamentos: input.saude?.medicamentos,
+          necessidades_especiais: input.saude?.necessidades_especiais,
+          convenio_medico: input.saude?.convenio_medico ?? false,
+          nome_convenio: input.saude?.nome_convenio,
+          numero_carteirinha: input.saude?.numero_carteirinha,
+          observacoes: input.saude?.observacoes,
+          teve_doenca_grave: input.saude?.teve_doenca_grave,
+          doenca_grave_qual: input.saude?.doenca_grave_qual,
+          alergia_alimento_medicamento: input.saude?.alergia_alimento_medicamento,
+          alergia_qual: input.saude?.alergia_qual,
+          necessidades_educacionais_especiais: input.saude?.necessidades_educacionais_especiais,
+          necessidades_qual: input.saude?.necessidades_qual,
+          ativo: true,
+        },
+      });
+      created.saude = saude;
+    }
 
-    console.log("[matricula-completa] etapa: criar contato de emergência");
-    const emergencia = await prisma.contatoEmergencia.create({
-      data: {
-        aluno_id: aluno.id,
-        nome: input.emergencia.nome,
-        parentesco: input.emergencia.parentesco,
-        telefone: input.emergencia.telefone,
-        observacao: input.emergencia.observacao,
-        ativo: true,
-      },
-    });
-    created.emergencia = emergencia;
+    let emergencia = null;
+    if (input.emergencia?.nome && input.emergencia.telefone) {
+      console.log("[matricula-completa] etapa: criar contato de emergência");
+      emergencia = await prisma.contatoEmergencia.create({
+        data: {
+          aluno_id: aluno.id,
+          nome: input.emergencia.nome,
+          parentesco: input.emergencia.parentesco,
+          telefone: input.emergencia.telefone,
+          observacao: input.emergencia.observacao,
+          ativo: true,
+        },
+      });
+      created.emergencia = emergencia;
+    }
 
     console.log("[matricula-completa] etapa: criar matrícula");
     const matricula = await prisma.matricula.create({
       data: {
         aluno_id: aluno.id,
         turma_id: input.matricula.turma_id,
-        ano_letivo: input.matricula.ano_letivo,
+        ano_letivo: anoLetivo,
         modalidade_ensino: input.matricula.modalidade_ensino,
         serie_ingresso: input.matricula.serie_ingresso,
         estabelecimento: input.matricula.estabelecimento,
         periodo: input.matricula.periodo,
-        data_matricula: parseDate(input.matricula.data_matricula),
+        data_matricula: dataMatricula,
         status: input.matricula.status ?? "ativa",
         observacoes: input.matricula.observacoes,
         documentos_entregues: input.matricula.documentos_entregues,

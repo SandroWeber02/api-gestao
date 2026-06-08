@@ -42,7 +42,7 @@ export const alunoCompletoSchema = z.object({
     nis: z.string().optional(),
   }).optional(),
   responsavel: z.object({
-    nome: z.string().min(1, "Nome do responsável é obrigatório").optional(),
+    nome: z.string().optional(),
     cpf: z.string().optional(),
     rg: z.string().optional(),
     celular: z.string().optional(),
@@ -58,7 +58,7 @@ export const alunoCompletoSchema = z.object({
     telefone_trabalho: z.string().optional(),
   }).optional(),
   relacao: z.object({
-    tipo: z.string().min(1, "Tipo de responsável é obrigatório").optional(),
+    tipo: z.string().optional(),
     parentesco: z.string().optional(),
     responsavel_financeiro: z.boolean().optional(),
     autorizado_retirada: z.boolean().optional(),
@@ -89,9 +89,9 @@ export const alunoCompletoSchema = z.object({
     necessidades_qual: z.string().optional(),
   }).optional(),
   emergencia: z.object({
-    nome: z.string().min(1, "Nome do contato de emergência é obrigatório").optional(),
+    nome: z.string().optional(),
     parentesco: z.string().optional(),
-    telefone: z.string().min(1, "Telefone do contato de emergência é obrigatório").optional(),
+    telefone: z.string().optional(),
     observacao: z.string().optional(),
   }).optional(),
   matricula: z.object({

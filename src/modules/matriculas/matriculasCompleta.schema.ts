@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const createMatriculaCompletaSchema = z.object({
   aluno: z.object({
-    nome: z.string().min(1, "aluno.nome é obrigatório"),
+    nome: z.string().min(1, "Nome do aluno é obrigatório"),
     data_nascimento: z.string().optional(),
     cpf: z.string().optional(),
     rg_certidao: z.string().optional(),
@@ -42,7 +42,7 @@ export const createMatriculaCompletaSchema = z.object({
     nis: z.string().optional(),
   }),
   responsavel: z.object({
-    nome: z.string().min(1, "responsavel.nome é obrigatório"),
+    nome: z.string().optional(),
     cpf: z.string().optional(),
     rg: z.string().optional(),
     celular: z.string().optional(),
@@ -56,13 +56,13 @@ export const createMatriculaCompletaSchema = z.object({
     cep: z.string().optional(),
     telefone: z.string().optional(),
     telefone_trabalho: z.string().optional(),
-  }),
+  }).optional(),
   relacao: z.object({
-    tipo: z.string().min(1, "relacao.tipo é obrigatório"),
+    tipo: z.string().optional(),
     parentesco: z.string().optional(),
     responsavel_financeiro: z.boolean().optional(),
     autorizado_retirada: z.boolean().optional(),
-  }),
+  }).optional(),
   endereco: z.object({
     endereco: z.string().optional(),
     cep: z.string().optional(),
@@ -72,7 +72,7 @@ export const createMatriculaCompletaSchema = z.object({
     bairro: z.string().optional(),
     cidade: z.string().optional(),
     estado: z.string().optional(),
-  }),
+  }).optional(),
   saude: z.object({
     alergias: z.string().optional(),
     medicamentos: z.string().optional(),
@@ -87,21 +87,21 @@ export const createMatriculaCompletaSchema = z.object({
     alergia_qual: z.string().optional(),
     necessidades_educacionais_especiais: z.boolean().optional(),
     necessidades_qual: z.string().optional(),
-  }),
+  }).optional(),
   emergencia: z.object({
-    nome: z.string().min(1, "emergencia.nome é obrigatório"),
+    nome: z.string().optional(),
     parentesco: z.string().optional(),
-    telefone: z.string().min(1, "emergencia.telefone é obrigatório"),
+    telefone: z.string().optional(),
     observacao: z.string().optional(),
-  }),
+  }).optional(),
   matricula: z.object({
-    turma_id: z.string().min(1, "matricula.turma_id é obrigatório"),
-    ano_letivo: z.coerce.number().min(1, "matricula.ano_letivo é obrigatório"),
+    turma_id: z.string().min(1, "Turma é obrigatória"),
+    ano_letivo: z.coerce.number().optional(),
     modalidade_ensino: z.string().optional(),
     serie_ingresso: z.string().optional(),
     estabelecimento: z.string().optional(),
     periodo: z.string().optional(),
-    data_matricula: z.string().optional(),
+    data_matricula: z.string().min(1, "Data da matrícula é obrigatória"),
     status: z.string().optional(),
     observacoes: z.string().optional(),
     documentos_entregues: z.string().optional(),
@@ -150,8 +150,8 @@ export type CreateMatriculaCompletaInput = {
     participa_bolsa_familia?: boolean;
     nis?: string;
   };
-  responsavel: {
-    nome: string;
+  responsavel?: {
+    nome?: string;
     cpf?: string;
     rg?: string;
     celular?: string;
@@ -166,13 +166,13 @@ export type CreateMatriculaCompletaInput = {
     telefone?: string;
     telefone_trabalho?: string;
   };
-  relacao: {
-    tipo: string;
+  relacao?: {
+    tipo?: string;
     parentesco?: string;
     responsavel_financeiro?: boolean;
     autorizado_retirada?: boolean;
   };
-  endereco: {
+  endereco?: {
     endereco?: string;
     cep?: string;
     logradouro?: string;
@@ -182,7 +182,7 @@ export type CreateMatriculaCompletaInput = {
     cidade?: string;
     estado?: string;
   };
-  saude: {
+  saude?: {
     alergias?: string;
     medicamentos?: string;
     necessidades_especiais?: string;
@@ -197,20 +197,20 @@ export type CreateMatriculaCompletaInput = {
     necessidades_educacionais_especiais?: boolean;
     necessidades_qual?: string;
   };
-  emergencia: {
-    nome: string;
+  emergencia?: {
+    nome?: string;
     parentesco?: string;
-    telefone: string;
+    telefone?: string;
     observacao?: string;
   };
   matricula: {
     turma_id: string;
-    ano_letivo: number;
+    ano_letivo?: number;
     modalidade_ensino?: string;
     serie_ingresso?: string;
     estabelecimento?: string;
     periodo?: string;
-    data_matricula?: string;
+    data_matricula: string;
     status?: string;
     observacoes?: string;
     documentos_entregues?: string;
