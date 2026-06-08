@@ -30,6 +30,38 @@ declare module "@prisma/client" {
     rg_certidao: string | null;
     sexo: string | null;
     tipo: string | null;
+    telefone: string | null;
+    nacionalidade: string | null;
+    naturalidade: string | null;
+    identificacao_unica: string | null;
+    certidao_nascimento: string | null;
+    termo: string | null;
+    folha: string | null;
+    livro: string | null;
+    data_emissao_certidao: Date | null;
+    uf_cartorio: string | null;
+    nome_cartorio: string | null;
+    estado_civil: string | null;
+    certidao_casamento: string | null;
+    documento_identidade: string | null;
+    data_expedicao_identidade: Date | null;
+    uf_identidade: string | null;
+    orgao_emissor_identidade: string | null;
+    portaria_naturalizacao: string | null;
+    condicao_aluno: string | null;
+    cor_raca: string | null;
+    mae_nome: string | null;
+    mae_profissao: string | null;
+    mae_local_trabalho: string | null;
+    mae_telefone: string | null;
+    pai_nome: string | null;
+    pai_profissao: string | null;
+    pai_local_trabalho: string | null;
+    pai_telefone: string | null;
+    aluno_mora_com_pais: boolean | null;
+    tipo_moradia: string | null;
+    participa_bolsa_familia: boolean | null;
+    nis: string | null;
     ativo: boolean;
     created_at: Date;
     updated_at: Date;
@@ -48,6 +80,11 @@ declare module "@prisma/client" {
     profissao: string | null;
     local_trabalho: string | null;
     telefone_comercial: string | null;
+    endereco: string | null;
+    bairro: string | null;
+    cep: string | null;
+    telefone: string | null;
+    telefone_trabalho: string | null;
     ativo: boolean;
     created_at: Date;
     updated_at: Date;
@@ -97,6 +134,12 @@ declare module "@prisma/client" {
     nome_convenio: string | null;
     numero_carteirinha: string | null;
     observacoes: string | null;
+    teve_doenca_grave: boolean | null;
+    doenca_grave_qual: string | null;
+    alergia_alimento_medicamento: boolean | null;
+    alergia_qual: string | null;
+    necessidades_educacionais_especiais: boolean | null;
+    necessidades_qual: string | null;
     ativo: boolean;
     created_at: Date;
     updated_at: Date;
@@ -123,10 +166,15 @@ declare module "@prisma/client" {
     aluno_id: string;
     turma_id: string;
     ano_letivo: number;
+    modalidade_ensino: string | null;
+    serie_ingresso: string | null;
+    estabelecimento: string | null;
     periodo: string | null;
     data_matricula: Date;
     status: string;
     observacoes: string | null;
+    documentos_entregues: string | null;
+    documentos_faltantes: string | null;
     ativo: boolean;
     created_at: Date;
     updated_at: Date;
@@ -161,16 +209,16 @@ declare module "@prisma/client" {
       update(args: { where: { id: string }; data: { nome?: string; ano_letivo?: number; periodo?: string; ativo?: boolean } }): Promise<any>;
     };
     aluno: {
-      create(args: { data: { nome: string; data_nascimento?: Date; cpf?: string; rg_certidao?: string; sexo?: string; tipo?: string; ativo?: boolean } }): Promise<Aluno>;
+      create(args: { data: any }): Promise<Aluno>;
       findMany(args?: { where?: { ativo?: boolean }; orderBy?: { created_at?: "asc" | "desc" } }): Promise<Aluno[]>;
       findUnique(args: { where: { id?: string; cpf?: string } }): Promise<Aluno | null>;
-      update(args: { where: { id: string }; data: { nome?: string; data_nascimento?: Date; cpf?: string; rg_certidao?: string; sexo?: string; tipo?: string; ativo?: boolean } }): Promise<Aluno>;
+      update(args: { where: { id: string }; data: any }): Promise<Aluno>;
     };
     responsavel: {
-      create(args: { data: { nome: string; cpf?: string; rg?: string; celular?: string; telefone_fixo?: string; email?: string; profissao?: string; local_trabalho?: string; telefone_comercial?: string; ativo?: boolean } }): Promise<Responsavel>;
+      create(args: { data: any }): Promise<Responsavel>;
       findMany(args?: { orderBy?: { created_at?: "asc" | "desc" } }): Promise<Responsavel[]>;
       findUnique(args: { where: { id?: string; cpf?: string } }): Promise<Responsavel | null>;
-      update(args: { where: { id: string }; data: { nome?: string; cpf?: string; rg?: string; celular?: string; telefone_fixo?: string; email?: string; profissao?: string; local_trabalho?: string; telefone_comercial?: string; ativo?: boolean } }): Promise<Responsavel>;
+      update(args: { where: { id: string }; data: any }): Promise<Responsavel>;
     };
     alunoResponsavel: {
       create(args: { data: { aluno_id: string; responsavel_id: string; tipo: string; parentesco?: string; responsavel_financeiro?: boolean; autorizado_retirada?: boolean; ativo?: boolean } }): Promise<AlunoResponsavel>;
@@ -186,10 +234,10 @@ declare module "@prisma/client" {
       update(args: { where: { id: string }; data: { aluno_id?: string; cep?: string; logradouro?: string; numero?: string; complemento?: string; bairro?: string; cidade?: string; estado?: string; ativo?: boolean } }): Promise<Endereco>;
     };
     saudeAluno: {
-      create(args: { data: { aluno_id: string; alergias?: string; medicamentos?: string; necessidades_especiais?: string; convenio_medico?: boolean; nome_convenio?: string; numero_carteirinha?: string; observacoes?: string; ativo?: boolean } }): Promise<SaudeAluno>;
+      create(args: { data: any }): Promise<SaudeAluno>;
       findMany(args?: { orderBy?: { created_at?: "asc" | "desc" } }): Promise<SaudeAluno[]>;
       findUnique(args: { where: { id?: string; aluno_id?: string } }): Promise<SaudeAluno | null>;
-      update(args: { where: { id: string }; data: { aluno_id?: string; alergias?: string; medicamentos?: string; necessidades_especiais?: string; convenio_medico?: boolean; nome_convenio?: string; numero_carteirinha?: string; observacoes?: string; ativo?: boolean } }): Promise<SaudeAluno>;
+      update(args: { where: { id: string }; data: any }): Promise<SaudeAluno>;
     };
     contatoEmergencia: {
       create(args: { data: { aluno_id: string; nome: string; parentesco?: string; telefone: string; observacao?: string; ativo?: boolean } }): Promise<ContatoEmergencia>;
@@ -198,11 +246,11 @@ declare module "@prisma/client" {
       update(args: { where: { id: string }; data: { aluno_id?: string; nome?: string; parentesco?: string; telefone?: string; observacao?: string; ativo?: boolean } }): Promise<ContatoEmergencia>;
     };
     matricula: {
-      create(args: { data: { aluno_id: string; turma_id: string; ano_letivo: number; periodo?: string; data_matricula?: Date; status?: string; observacoes?: string; ativo?: boolean } }): Promise<Matricula>;
+      create(args: { data: any }): Promise<Matricula>;
       findMany(args?: { orderBy?: { created_at?: "asc" | "desc" } }): Promise<Matricula[]>;
       findUnique(args: { where: { id: string } }): Promise<Matricula | null>;
       findFirst(args: { where: { aluno_id: string; ano_letivo: number } }): Promise<Matricula | null>;
-      update(args: { where: { id: string }; data: { aluno_id?: string; turma_id?: string; ano_letivo?: number; periodo?: string; data_matricula?: Date; status?: string; observacoes?: string; ativo?: boolean } }): Promise<Matricula>;
+      update(args: { where: { id: string }; data: any }): Promise<Matricula>;
     };
     documentoMatricula: {
       create(args: { data: { aluno_id: string; matricula_id?: string; tipo: string; nome_arquivo: string; arquivo_url: string; storage_path: string; status?: string; ativo?: boolean } }): Promise<DocumentoMatricula>;

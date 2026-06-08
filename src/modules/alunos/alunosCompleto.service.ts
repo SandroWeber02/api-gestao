@@ -124,6 +124,38 @@ async function updateAlunoBloco(id: string, aluno: AlunoBasico, input?: AlunoCom
       rg_certidao: input.rg_certidao,
       sexo: input.sexo,
       tipo: input.tipo,
+      telefone: input.telefone,
+      nacionalidade: input.nacionalidade,
+      naturalidade: input.naturalidade,
+      identificacao_unica: input.identificacao_unica,
+      certidao_nascimento: input.certidao_nascimento,
+      termo: input.termo,
+      folha: input.folha,
+      livro: input.livro,
+      data_emissao_certidao: parseDate(input.data_emissao_certidao),
+      uf_cartorio: input.uf_cartorio,
+      nome_cartorio: input.nome_cartorio,
+      estado_civil: input.estado_civil,
+      certidao_casamento: input.certidao_casamento,
+      documento_identidade: input.documento_identidade,
+      data_expedicao_identidade: parseDate(input.data_expedicao_identidade),
+      uf_identidade: input.uf_identidade,
+      orgao_emissor_identidade: input.orgao_emissor_identidade,
+      portaria_naturalizacao: input.portaria_naturalizacao,
+      condicao_aluno: input.condicao_aluno,
+      cor_raca: input.cor_raca,
+      mae_nome: input.mae_nome,
+      mae_profissao: input.mae_profissao,
+      mae_local_trabalho: input.mae_local_trabalho,
+      mae_telefone: input.mae_telefone,
+      pai_nome: input.pai_nome,
+      pai_profissao: input.pai_profissao,
+      pai_local_trabalho: input.pai_local_trabalho,
+      pai_telefone: input.pai_telefone,
+      aluno_mora_com_pais: input.aluno_mora_com_pais,
+      tipo_moradia: input.tipo_moradia,
+      participa_bolsa_familia: input.participa_bolsa_familia,
+      nis: input.nis,
     }),
   });
 }
@@ -157,6 +189,11 @@ async function resolveResponsavel(input: AlunoCompletoInput, relacaoAtual: Relac
     profissao: input.responsavel.profissao,
     local_trabalho: input.responsavel.local_trabalho,
     telefone_comercial: input.responsavel.telefone_comercial,
+    endereco: input.responsavel.endereco,
+    bairro: input.responsavel.bairro,
+    cep: input.responsavel.cep,
+    telefone: input.responsavel.telefone,
+    telefone_trabalho: input.responsavel.telefone_trabalho,
     ativo: true,
   });
 
@@ -201,7 +238,17 @@ async function upsertRelacao(aluno_id: string, input: AlunoCompletoInput, relaca
 async function upsertEndereco(aluno_id: string, input?: AlunoCompletoInput["endereco"]) {
   if (!input) return;
   const existing = await (prisma.endereco as any).findUnique({ where: { aluno_id } });
-  const data = removeUndefined({ aluno_id, ...input, ativo: true });
+  const data = removeUndefined({
+    aluno_id,
+    cep: input.cep,
+    logradouro: input.logradouro ?? input.endereco,
+    numero: input.numero,
+    complemento: input.complemento,
+    bairro: input.bairro,
+    cidade: input.cidade,
+    estado: input.estado,
+    ativo: true,
+  });
   return existing
     ? (prisma.endereco as any).update({ where: { id: existing.id }, data })
     : (prisma.endereco as any).create({ data });
@@ -248,10 +295,15 @@ async function upsertMatricula(aluno_id: string, input?: AlunoCompletoInput["mat
     aluno_id,
     turma_id: input.turma_id,
     ano_letivo: input.ano_letivo,
+    modalidade_ensino: input.modalidade_ensino,
+    serie_ingresso: input.serie_ingresso,
+    estabelecimento: input.estabelecimento,
     periodo: input.periodo,
     data_matricula: parseDate(input.data_matricula),
     status: input.status,
     observacoes: input.observacoes,
+    documentos_entregues: input.documentos_entregues,
+    documentos_faltantes: input.documentos_faltantes,
     ativo: true,
   });
 

@@ -49,6 +49,38 @@ model Aluno {
   rg_certidao     String?
   sexo            String?
   tipo            String?
+  telefone        String?
+  nacionalidade   String?
+  naturalidade    String?
+  identificacao_unica String?
+  certidao_nascimento String?
+  termo           String?
+  folha           String?
+  livro           String?
+  data_emissao_certidao DateTime?
+  uf_cartorio     String?
+  nome_cartorio   String?
+  estado_civil    String?
+  certidao_casamento String?
+  documento_identidade String?
+  data_expedicao_identidade DateTime?
+  uf_identidade   String?
+  orgao_emissor_identidade String?
+  portaria_naturalizacao String?
+  condicao_aluno  String?
+  cor_raca        String?
+  mae_nome        String?
+  mae_profissao   String?
+  mae_local_trabalho String?
+  mae_telefone    String?
+  pai_nome        String?
+  pai_profissao   String?
+  pai_local_trabalho String?
+  pai_telefone    String?
+  aluno_mora_com_pais Boolean?
+  tipo_moradia    String?
+  participa_bolsa_familia Boolean?
+  nis             String?
   ativo           Boolean  @default(true)
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
@@ -75,6 +107,11 @@ model Responsavel {
   profissao          String?
   local_trabalho     String?
   telefone_comercial String?
+  endereco           String?
+  bairro             String?
+  cep                String?
+  telefone           String?
+  telefone_trabalho  String?
   ativo              Boolean  @default(true)
   created_at         DateTime @default(now())
   updated_at         DateTime @updatedAt
@@ -135,6 +172,12 @@ model SaudeAluno {
   nome_convenio          String?
   numero_carteirinha     String?
   observacoes            String?
+  teve_doenca_grave      Boolean?
+  doenca_grave_qual      String?
+  alergia_alimento_medicamento Boolean?
+  alergia_qual           String?
+  necessidades_educacionais_especiais Boolean?
+  necessidades_qual      String?
   ativo                  Boolean  @default(true)
   created_at             DateTime @default(now())
   updated_at             DateTime @updatedAt
@@ -167,10 +210,15 @@ model Matricula {
   aluno_id       String
   turma_id       String
   ano_letivo     Int
+  modalidade_ensino String?
+  serie_ingresso String?
+  estabelecimento String?
   periodo        String?
   data_matricula DateTime @default(now())
   status         String   @default("ativa")
   observacoes    String?
+  documentos_entregues String?
+  documentos_faltantes String?
   ativo          Boolean  @default(true)
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
