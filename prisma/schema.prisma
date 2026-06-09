@@ -1,0 +1,323 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Perfil {
+  admin
+  professor
+}
+
+model Usuario {
+  id         String   @id @default(uuid())
+  nome       String
+  email      String   @unique
+  senha      String
+  perfil     Perfil
+  ativo      Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  professores Professor[]
+
+  @@map("usuarios")
+}
+
+
+model Turma {
+  id         String   @id @default(uuid())
+  nome       String
+  ano_letivo Int
+  periodo    String
+  ativo      Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  matriculas Matricula[]
+  disciplinas TurmaDisciplina[]
+  professores ProfessorTurmaDisciplina[]
+
+  @@map("turmas")
+}
+
+
+model Aluno {
+  id              String   @id @default(uuid())
+  nome            String
+  data_nascimento DateTime?
+  cpf             String?  @unique
+  rg_certidao     String?
+  sexo            String?
+  tipo            String?
+  telefone        String?
+  nacionalidade   String?
+  naturalidade    String?
+  identificacao_unica String?
+  certidao_nascimento String?
+  termo           String?
+  folha           String?
+  livro           String?
+  data_emissao_certidao DateTime?
+  uf_cartorio     String?
+  nome_cartorio   String?
+  estado_civil    String?
+  certidao_casamento String?
+  documento_identidade String?
+  data_expedicao_identidade DateTime?
+  uf_identidade   String?
+  orgao_emissor_identidade String?
+  portaria_naturalizacao String?
+  condicao_aluno  String?
+  cor_raca        String?
+  mae_nome        String?
+  mae_profissao   String?
+  mae_local_trabalho String?
+  mae_telefone    String?
+  pai_nome        String?
+  pai_profissao   String?
+  pai_local_trabalho String?
+  pai_telefone    String?
+  aluno_mora_com_pais Boolean?
+  tipo_moradia    String?
+  participa_bolsa_familia Boolean?
+  nis             String?
+  ativo           Boolean  @default(true)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  responsaveis     AlunoResponsavel[]
+  endereco          Endereco?
+  saude             SaudeAluno?
+  contato_emergencia ContatoEmergencia?
+  matriculas        Matricula[]
+  documentos DocumentoMatricula[]
+
+  @@map("alunos")
+}
+
+
+model Responsavel {
+  id                 String   @id @default(uuid())
+  nome               String
+  cpf                String?  @unique
+  rg                 String?
+  celular            String?
+  telefone_fixo      String?
+  email              String?
+  profissao          String?
+  local_trabalho     String?
+  telefone_comercial String?
+  endereco           String?
+  bairro             String?
+  cep                String?
+  telefone           String?
+  telefone_trabalho  String?
+  ativo              Boolean  @default(true)
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  alunos             AlunoResponsavel[]
+
+  @@map("responsaveis")
+}
+
+
+model AlunoResponsavel {
+  id                     String      @id @default(uuid())
+  aluno_id               String
+  responsavel_id         String
+  tipo                   String
+  parentesco             String?
+  responsavel_financeiro Boolean     @default(false)
+  autorizado_retirada    Boolean     @default(false)
+  ativo                  Boolean     @default(true)
+  created_at             DateTime    @default(now())
+  updated_at             DateTime    @updatedAt
+
+  aluno       Aluno      @relation(fields: [aluno_id], references: [id])
+  responsavel Responsavel @relation(fields: [responsavel_id], references: [id])
+
+  @@unique([aluno_id, responsavel_id])
+  @@map("aluno_responsavel")
+}
+
+
+model Endereco {
+  id          String   @id @default(uuid())
+  aluno_id    String   @unique
+  cep         String?
+  logradouro  String?
+  numero      String?
+  complemento String?
+  bairro      String?
+  cidade      String?
+  estado      String?
+  ativo       Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  aluno       Aluno    @relation(fields: [aluno_id], references: [id])
+
+  @@map("enderecos")
+}
+
+
+model SaudeAluno {
+  id                     String   @id @default(uuid())
+  aluno_id               String   @unique
+  alergias               String?
+  medicamentos           String?
+  necessidades_especiais String?
+  convenio_medico        Boolean  @default(false)
+  nome_convenio          String?
+  numero_carteirinha     String?
+  observacoes            String?
+  teve_doenca_grave      Boolean?
+  doenca_grave_qual      String?
+  alergia_alimento_medicamento Boolean?
+  alergia_qual           String?
+  necessidades_educacionais_especiais Boolean?
+  necessidades_qual      String?
+  ativo                  Boolean  @default(true)
+  created_at             DateTime @default(now())
+  updated_at             DateTime @updatedAt
+
+  aluno                  Aluno    @relation(fields: [aluno_id], references: [id])
+
+  @@map("saude_aluno")
+}
+
+
+model ContatoEmergencia {
+  id         String   @id @default(uuid())
+  aluno_id   String   @unique
+  nome       String
+  parentesco String?
+  telefone   String
+  observacao String?
+  ativo      Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  aluno      Aluno    @relation(fields: [aluno_id], references: [id])
+
+  @@map("contatos_emergencia")
+}
+
+
+model Matricula {
+  id             String   @id @default(uuid())
+  aluno_id       String
+  turma_id       String
+  ano_letivo     Int
+  modalidade_ensino String?
+  serie_ingresso String?
+  estabelecimento String?
+  periodo        String?
+  data_matricula DateTime @default(now())
+  status         String   @default("ativa")
+  observacoes    String?
+  documentos_entregues String?
+  documentos_faltantes String?
+  ativo          Boolean  @default(true)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  aluno          Aluno    @relation(fields: [aluno_id], references: [id])
+  turma          Turma    @relation(fields: [turma_id], references: [id])
+
+  documentos DocumentoMatricula[]
+
+  @@map("matriculas")
+}
+
+
+model DocumentoMatricula {
+  id           String   @id @default(uuid())
+  aluno_id     String
+  matricula_id String?
+  tipo         String
+  nome_arquivo String
+  arquivo_url  String
+  storage_path String
+  status       String   @default("enviado")
+  ativo        Boolean  @default(true)
+  uploaded_at  DateTime @default(now())
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  aluno     Aluno      @relation(fields: [aluno_id], references: [id])
+  matricula Matricula? @relation(fields: [matricula_id], references: [id])
+
+  @@map("documentos_matricula")
+}
+
+
+model Professor {
+  id         String   @id @default(uuid())
+  usuario_id String?
+  nome       String
+  email      String?
+  telefone   String?
+  formacao   String?
+  ativo      Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  usuario Usuario? @relation(fields: [usuario_id], references: [id])
+  vinculos ProfessorTurmaDisciplina[]
+
+  @@map("professores")
+}
+
+
+model Disciplina {
+  id            String   @id @default(uuid())
+  nome          String
+  codigo        String?
+  carga_horaria Int?
+  ativo         Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  turmas TurmaDisciplina[]
+  professores ProfessorTurmaDisciplina[]
+
+  @@map("disciplinas")
+}
+
+
+model TurmaDisciplina {
+  id            String   @id @default(uuid())
+  turma_id      String
+  disciplina_id String
+  ativo         Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  turma      Turma      @relation(fields: [turma_id], references: [id])
+  disciplina Disciplina @relation(fields: [disciplina_id], references: [id])
+
+  @@map("turma_disciplinas")
+}
+
+
+model ProfessorTurmaDisciplina {
+  id            String   @id @default(uuid())
+  professor_id  String
+  turma_id      String
+  disciplina_id String
+  ativo         Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  professor  Professor  @relation(fields: [professor_id], references: [id])
+  turma      Turma      @relation(fields: [turma_id], references: [id])
+  disciplina Disciplina @relation(fields: [disciplina_id], references: [id])
+
+  @@map("professor_turma_disciplinas")
+}
