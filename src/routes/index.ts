@@ -11,6 +11,10 @@ import matriculasRoutes from "../modules/matriculas/matriculas.routes";
 import saudeAlunoRoutes from "../modules/saude-aluno/saudeAluno.routes";
 import contatosEmergenciaRoutes from "../modules/contatos-emergencia/contatosEmergencia.routes";
 import documentosMatriculaRoutes from "../modules/documentos-matricula/documentosMatricula.routes";
+import professoresRoutes from "../modules/professores/professores.routes";
+import disciplinasRoutes from "../modules/disciplinas/disciplinas.routes";
+import turmaDisciplinasRoutes from "../modules/turma-disciplinas/turmaDisciplinas.routes";
+import professorTurmaDisciplinasRoutes from "../modules/professor-turma-disciplinas/professorTurmaDisciplinas.routes";
 
 const routes = Router();
 
@@ -26,5 +30,9 @@ routes.use("/matriculas", matriculasRoutes);
 routes.use("/saude-aluno", saudeAlunoRoutes);
 routes.use("/contatos-emergencia", contatosEmergenciaRoutes);
 routes.use("/documentos-matricula", documentosMatriculaRoutes);
+routes.use("/professores", professoresRoutes);
+routes.use("/disciplinas", disciplinasRoutes);
+routes.use("/turma-disciplinas", turmaDisciplinasRoutes);
+routes.use("/professor-turma-disciplinas", professorTurmaDisciplinasRoutes);
 
 export default routes;
