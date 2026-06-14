@@ -156,6 +156,14 @@ async function updateAlunoBloco(id: string, aluno: AlunoBasico, input?: AlunoCom
       tipo_moradia: input.tipo_moradia,
       participa_bolsa_familia: input.participa_bolsa_familia,
       nis: input.nis,
+      bolsa_familia_nome: input.bolsa_familia_nome,
+      bolsa_familia_nacionalidade: input.bolsa_familia_nacionalidade,
+      bolsa_familia_naturalidade: input.bolsa_familia_naturalidade,
+      bolsa_familia_nome_mae: input.bolsa_familia_nome_mae,
+      bolsa_familia_nis: input.bolsa_familia_nis,
+      bolsa_familia_identidade: input.bolsa_familia_identidade,
+      bolsa_familia_orgao_emissor: input.bolsa_familia_orgao_emissor,
+      bolsa_familia_data_expedicao: parseDate(input.bolsa_familia_data_expedicao),
     }),
   });
 }
@@ -300,6 +308,7 @@ async function upsertMatricula(aluno_id: string, input?: AlunoCompletoInput["mat
     ano_letivo: anoLetivo,
     modalidade_ensino: input.modalidade_ensino,
     serie_ingresso: input.serie_ingresso,
+    tipo_matricula: input.tipo_matricula,
     estabelecimento: input.estabelecimento,
     periodo: input.periodo,
     data_matricula: dataMatricula,

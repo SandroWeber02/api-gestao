@@ -40,6 +40,14 @@ export const createMatriculaCompletaSchema = z.object({
     tipo_moradia: z.string().optional(),
     participa_bolsa_familia: z.boolean().optional(),
     nis: z.string().optional(),
+    bolsa_familia_nome: z.string().optional(),
+    bolsa_familia_nacionalidade: z.string().optional(),
+    bolsa_familia_naturalidade: z.string().optional(),
+    bolsa_familia_nome_mae: z.string().optional(),
+    bolsa_familia_nis: z.string().optional(),
+    bolsa_familia_identidade: z.string().optional(),
+    bolsa_familia_orgao_emissor: z.string().optional(),
+    bolsa_familia_data_expedicao: z.string().optional(),
   }),
   responsavel: z.object({
     nome: z.string().optional(),
@@ -99,6 +107,7 @@ export const createMatriculaCompletaSchema = z.object({
     ano_letivo: z.coerce.number().optional(),
     modalidade_ensino: z.string().optional(),
     serie_ingresso: z.string().optional(),
+    tipo_matricula: z.enum(["pagante", "convenio"]).optional(),
     estabelecimento: z.string().optional(),
     periodo: z.string().optional(),
     data_matricula: z.string().min(1, "Data da matrícula é obrigatória"),
@@ -149,6 +158,14 @@ export type CreateMatriculaCompletaInput = {
     tipo_moradia?: string;
     participa_bolsa_familia?: boolean;
     nis?: string;
+    bolsa_familia_nome?: string;
+    bolsa_familia_nacionalidade?: string;
+    bolsa_familia_naturalidade?: string;
+    bolsa_familia_nome_mae?: string;
+    bolsa_familia_nis?: string;
+    bolsa_familia_identidade?: string;
+    bolsa_familia_orgao_emissor?: string;
+    bolsa_familia_data_expedicao?: string;
   };
   responsavel?: {
     nome?: string;
@@ -208,6 +225,7 @@ export type CreateMatriculaCompletaInput = {
     ano_letivo?: number;
     modalidade_ensino?: string;
     serie_ingresso?: string;
+    tipo_matricula?: "pagante" | "convenio";
     estabelecimento?: string;
     periodo?: string;
     data_matricula: string;

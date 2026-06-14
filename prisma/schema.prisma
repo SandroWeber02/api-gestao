@@ -85,6 +85,14 @@ model Aluno {
   tipo_moradia    String?
   participa_bolsa_familia Boolean?
   nis             String?
+  bolsa_familia_nome String?
+  bolsa_familia_nacionalidade String?
+  bolsa_familia_naturalidade String?
+  bolsa_familia_nome_mae String?
+  bolsa_familia_nis String?
+  bolsa_familia_identidade String?
+  bolsa_familia_orgao_emissor String?
+  bolsa_familia_data_expedicao DateTime?
   ativo           Boolean  @default(true)
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
@@ -216,6 +224,7 @@ model Matricula {
   ano_letivo     Int
   modalidade_ensino String?
   serie_ingresso String?
+  tipo_matricula String?
   estabelecimento String?
   periodo        String?
   data_matricula DateTime @default(now())

@@ -62,6 +62,14 @@ declare module "@prisma/client" {
     tipo_moradia: string | null;
     participa_bolsa_familia: boolean | null;
     nis: string | null;
+    bolsa_familia_nome: string | null;
+    bolsa_familia_nacionalidade: string | null;
+    bolsa_familia_naturalidade: string | null;
+    bolsa_familia_nome_mae: string | null;
+    bolsa_familia_nis: string | null;
+    bolsa_familia_identidade: string | null;
+    bolsa_familia_orgao_emissor: string | null;
+    bolsa_familia_data_expedicao: Date | null;
     ativo: boolean;
     created_at: Date;
     updated_at: Date;
@@ -168,6 +176,7 @@ declare module "@prisma/client" {
     ano_letivo: number;
     modalidade_ensino: string | null;
     serie_ingresso: string | null;
+    tipo_matricula: string | null;
     estabelecimento: string | null;
     periodo: string | null;
     data_matricula: Date;
