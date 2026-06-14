@@ -8,6 +8,7 @@ import {
   updateAlunoController,
 } from "./alunos.controller";
 import { getAlunoCompletoController, updateAlunoCompletoController } from "./alunosCompleto.controller";
+import { getFichaMatriculaController } from "./alunosFicha.controller";
 
 const alunosRoutes = Router();
 
@@ -15,6 +16,7 @@ alunosRoutes.use(authMiddleware);
 alunosRoutes.post("/", createAlunoController);
 alunosRoutes.get("/", listAlunosController);
 alunosRoutes.get("/:id/completo", getAlunoCompletoController);
+alunosRoutes.get("/:id/ficha-matricula", getFichaMatriculaController);
 alunosRoutes.get("/:id", getAlunoByIdController);
 alunosRoutes.put("/:id/completo", updateAlunoCompletoController);
 alunosRoutes.put("/:id", updateAlunoController);

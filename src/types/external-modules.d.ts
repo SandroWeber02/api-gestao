@@ -345,3 +345,40 @@ declare module "multer" {
   const multer: MulterFactory;
   export default multer;
 }
+
+
+declare module "puppeteer" {
+  type PdfMargin = {
+    top?: string;
+    right?: string;
+    bottom?: string;
+    left?: string;
+  };
+
+  type PdfOptions = {
+    format?: string;
+    printBackground?: boolean;
+    margin?: PdfMargin;
+  };
+
+  type Page = {
+    setContent(html: string, options?: { waitUntil?: string | string[] }): Promise<void>;
+    pdf(options?: PdfOptions): Promise<Buffer>;
+  };
+
+  type Browser = {
+    newPage(): Promise<Page>;
+    close(): Promise<void>;
+  };
+
+  type LaunchOptions = {
+    headless?: boolean | "new";
+    args?: string[];
+  };
+
+  const puppeteer: {
+    launch(options?: LaunchOptions): Promise<Browser>;
+  };
+
+  export default puppeteer;
+}

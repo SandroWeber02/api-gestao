@@ -70,6 +70,16 @@ async function findRelacaoPrincipal(aluno_id: string): Promise<RelacaoAlunoRespo
 async function findMatriculaAtivaByAluno(aluno_id: string) {
   return (prisma.matricula as any).findFirst({
     where: { aluno_id, ativo: true },
+    include: {
+      turma: {
+        select: {
+          id: true,
+          nome: true,
+          ano_letivo: true,
+          periodo: true,
+        },
+      },
+    },
     orderBy: { created_at: "desc" },
   });
 }
