@@ -1,23 +1,39 @@
 {
   "name": "api-gestao",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Backend de gestão escolar",
+  "main": "dist/server.js",
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@supabase/supabase-js": "^2.105.1",
+    "@prisma/client": "^6.8.2",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "zod": "^3.23.8",
+    "bcrypt": "^5.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "@supabase/supabase-js": "^2.105.1",
+    "multer": "^1.4.5-lts.1",
+    "puppeteer": "^24.10.2"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
-    "nodemon": "^3.1.14"
+    "@types/node": "^22.15.21",
+    "prisma": "^6.8.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.8.3",
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/multer": "^1.4.12"
   }
 }
