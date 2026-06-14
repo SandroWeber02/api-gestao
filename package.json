@@ -27,6 +27,7 @@
     "puppeteer": "^24.10.2"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.6",
     "@types/node": "^22.15.21",
     "prisma": "^6.8.2",
